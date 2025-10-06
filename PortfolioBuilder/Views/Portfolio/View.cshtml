@@ -1,0 +1,37 @@
+
+@{
+    ViewData["Title"] = "Portfolio";
+    var user = ViewBag.User;
+    var projects = ViewBag.Projects as System.Collections.Generic.List<PortfolioBuilder.Models.Project>;
+    var skills = ViewBag.Skills as System.Collections.Generic.List<PortfolioBuilder.Models.Skill>;
+}
+<div class="row">
+  <div class="col-md-4 text-center">
+    <div class="card-modern">
+      <img src="@(user?.ProfilePictureUrl ?? "/images/avatar-placeholder.png")" class="img-fluid rounded-circle mb-2" style="max-width:150px" />
+      <h3>@user?.FullName ?? user?.UserName</h3>
+      <p>@user?.Bio</p>
+      <a class="btn btn-outline-primary" href="mailto:@user?.Email">Contact</a>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card-modern">
+      <h4>Skills</h4>
+      <div class="mb-3">
+        @foreach(var s in skills) {
+          <span class="badge bg-secondary me-1">@s.Name</span>
+        }
+      </div>
+    </div>
+    <div class="card-modern">
+      <h4>Projects</h4>
+      @foreach(var p in projects) {
+        <div class="card-modern mb-2">
+          <h5>@p.Title</h5>
+          <p>@p.Description</p>
+          @if(!string.IsNullOrEmpty(p.Link)) { <a href="@p.Link" target="_blank">View</a> }
+        </div>
+      }
+    </div>
+  </div>
+</div>

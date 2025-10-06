@@ -1,0 +1,63 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Portfolio Builder - @ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/site.css" rel="stylesheet" />
+</head>
+<body class="theme-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="/">PortfolioBuilder</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item me-2"><a class="nav-link" href="/">Home</a></li>
+        @if (User.Identity != null && User.Identity.IsAuthenticated) {
+          <li class="nav-item me-2"><a class="nav-link" href="/Dashboard">Dashboard</a></li>
+          <li class="nav-item me-2"><form method="post" action="/Account/Logout"><button class="btn btn-link nav-link">Logout</button></form></li>
+        } else {
+          <li class="nav-item me-2"><a class="nav-link" href="/Account/Register">Register</a></li>
+          <li class="nav-item me-2"><a class="nav-link" href="/Account/Login">Login</a></li>
+        }
+        <li class="nav-item">
+          <button id="themeToggle" class="btn btn-outline-secondary btn-sm">Dark</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container mt-4">
+    @RenderBody()
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Dark/Light toggle using localStorage
+const btn = document.getElementById('themeToggle');
+const body = document.body;
+function applyTheme(t) {
+    if (t === 'dark') {
+        body.classList.remove('theme-light');
+        body.classList.add('theme-dark');
+        btn.textContent = 'Light';
+    } else {
+        body.classList.remove('theme-dark');
+        body.classList.add('theme-light');
+        btn.textContent = 'Dark';
+    }
+}
+const saved = localStorage.getItem('theme') || 'light';
+applyTheme(saved);
+btn.addEventListener('click', () => {
+    const next = body.classList.contains('theme-dark') ? 'light' : 'dark';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+});
+</script>
+</body>
+</html>

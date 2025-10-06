@@ -1,0 +1,83 @@
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var user = ViewBag.User as PortfolioBuilder.Models.ApplicationUser;
+    var projects = ViewBag.Projects as System.Collections.Generic.List<PortfolioBuilder.Models.Project>;
+    var skills = ViewBag.Skills as System.Collections.Generic.List<PortfolioBuilder.Models.Skill>;
+}
+<h2>Dashboard</h2>
+<div class="row">
+  <div class="col-md-4">
+    <div class="card-modern text-center">
+      <img src="@(user?.ProfilePictureUrl ?? "/images/avatar-placeholder.png")" class="img-fluid rounded-circle mb-2" style="max-width:140px" />
+      <h5>@user?.FullName ?? user?.UserName</h5>
+      <p>@user?.Bio</p>
+      <form method="post" enctype="multipart/form-data" asp-action="UploadProfilePicture">
+        <div class="mb-2"><input type="file" name="file" class="form-control" /></div>
+        <button class="btn btn-sm btn-accent">Upload Picture</button>
+      </form>
+    </div>
+    <div class="card-modern">
+      <h6>Add Skill</h6>
+      <form method="post" asp-action="AddSkill">
+        <div class="mb-2"><input name="name" class="form-control" placeholder="Skill name" required></div>
+        <div class="mb-2"><input name="proficiency" class="form-control" placeholder="Proficiency (0-100)"></div>
+        <button class="btn btn-accent">Add</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card-modern">
+      <h5>Projects</h5>
+      @foreach(var p in projects) {
+        <div class="d-flex justify-content-between align-items-start border p-2 mb-2">
+          <div>
+            <strong>@p.Title</strong><br />@p.Description
+            @if(!string.IsNullOrEmpty(p.Link)) { <div><a href="@p.Link" target="_blank">View</a></div> }
+          </div>
+          <div class="text-end">
+            <form method="post" asp-action="DeleteProject" style="display:inline"><input type="hidden" name="id" value="@p.Id" /><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#editProject@p.Id">Edit</button>
+            <div class="collapse mt-2" id="editProject@p.Id">
+              <form method="post" asp-action="EditProject">
+                <input type="hidden" name="id" value="@p.Id" />
+                <input name="title" value="@p.Title" class="form-control mb-1" />
+                <input name="link" value="@p.Link" class="form-control mb-1" />
+                <textarea name="description" class="form-control mb-1">@p.Description</textarea>
+                <button class="btn btn-sm btn-accent">Save</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      }
+      <form method="post" asp-action="AddProject">
+        <input name="title" class="form-control mb-2" placeholder="Project title" required />
+        <textarea name="description" class="form-control mb-2" placeholder="Description"></textarea>
+        <input name="link" class="form-control mb-2" placeholder="Optional link" />
+        <button class="btn btn-accent">Add Project</button>
+      </form>
+    </div>
+    <div class="card-modern">
+      <h5>Skills</h5>
+      <div class="mb-2">
+        @foreach(var s in skills) {
+          <div class="d-flex justify-content-between align-items-center border p-2 mb-1">
+            <div>@s.Name (@s.Proficiency)</div>
+            <div>
+              <form method="post" asp-action="DeleteSkill" style="display:inline"><input type="hidden" name="id" value="@s.Id" /><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+              <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#editSkill@s.Id">Edit</button>
+              <div class="collapse mt-2" id="editSkill@s.Id">
+                <form method="post" asp-action="EditSkill">
+                  <input type="hidden" name="id" value="@s.Id" />
+                  <input name="name" value="@s.Name" class="form-control mb-1" />
+                  <input name="proficiency" value="@s.Proficiency" class="form-control mb-1" />
+                  <button class="btn btn-sm btn-accent">Save</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
